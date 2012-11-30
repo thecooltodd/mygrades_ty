@@ -1,0 +1,38 @@
+<h1>Calculate Results</h1>
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Score</th>
+    <th>Grade</th>
+    <th></th>
+    <th></th>
+    <th></th>
+    </tr>
+<% @students.each do |student| %>
+  <tr>
+    <td><%= student.username %></td>
+    <td><%= student.total_score %></td>
+    <% case student.total_score when (@resultavg-0.5*@resultstd)..(@resultavg+0.5*@resultstd) %>
+    <td>C</td>
+    <% when (@resultavg+0.5*@resultstd)..(@resultavg+1.5*@resultstd) %>
+    <td>B</td>
+    <% when (@resultavg+1.5*@resultstd)..100 %>
+    <td>A</td>
+    <% when (@resultavg-1.5*@resultstd)..(@resultavg-0.5*@resultstd) %>
+    <td>D</td>
+    <% when 0..(@resultavg-1.5*@resultstd)%>
+    <td>F</td>
+    <% end %>
+    </tr>
+    <% end %>
+    </table>
+  <br />
+  <th>Average: </th>
+  <td><%= @resultavg %></td>
+  <br />
+  <th>Standard deviation: </th>
+  <td><%= @resultstd %></td>
+  <br />
+  <%= link_to 'Back', students_path %>
+  <br />
+  <%= link_to 'Custom Cutoff', custom_path %>

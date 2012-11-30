@@ -91,4 +91,47 @@ class StudentsController < ApplicationController
       format.json { head :no_content }
     end
   end
+
+  def calc_dist
+    @flag = 0
+    @students = Student.all
+    @students.each do |student|
+      @c_total = 0
+      @c_earned = 0
+      Grade.find_all_by_student_id(student.id).each do |grade|
+        Task.find_all_by_id(grade.task_id).each do |course|
+          @c_total += course.total
+          @c_earned += grade.earned
+        end
+      end
+      student.total_score = (@c_earned.to_f/@c_total.to_f)*100
+    end
+    @resultavg = 0
+    @resultstd = 0
+    @resultavg = @students.inject(0){|acc, student| acc + student.total_score}/@students.length.to_f
+    @resultstd = Math.sqrt(@students.inject(0){|sum, u|sum+(u.total_score-@resultavg)**2}/@students.length.to_f)
+    render "calculate"
+  end
+
+  def cutoff
+    @students = Student.all
+    @flag = 1
+    @students.each do |student|
+      @c_total = 0
+      @c_earned = 0
+      Grade.find_all_by_student_id(student.id).each do |grade|
+        Task.find_all_by_id(grade.task_id).each do |course|
+          @c_total += course.total
+          @c_earned += grade.earned
+        end
+      end
+      student.total_score = (@c_earned.to_f/@c_total.to_f)*100
+    end
+    render "calculate"
+  end
+
+  def custom
+    render "custom"
+  end
+
 end

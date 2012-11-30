@@ -1,5 +1,8 @@
 MygradesSr::Application.routes.draw do
-  resources :categories
+match '/calc_dist' => 'students#calc_dist'
+match '/custom' => 'students#custom'
+match '/cutoff' => 'students#cutoff'
+resources :categories
 
   resources :grades
 
