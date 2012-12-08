@@ -1,6 +1,14 @@
 <h1>Enter Cutoff Ranges</h1>
-<% form_tag("/search", method: "get") do %>
-  <%= text_field_tag(:q)%>
-  <% submit_tag("Submit") %>
-<% end %>
-<th>wat</th>
+<form action = cutoff>
+  <th>A minimum<th>
+  <input type = "decimal" name = "Acut">
+  <th>B minimum<th>
+  <input type = "decimal" name = "Bcut">
+  <th>C minimum<th>
+  <input type = "decimal" name = "Ccut">
+  <th>D minimum<th>
+  <input type = "decimal" name = "Dcut">
+  <br>
+  <%= check_box_tag(:plusminus) %>
+  <%= label_tag(:plusminus, "Plus/Minus Grading") %>
+  <input type="submit"/>

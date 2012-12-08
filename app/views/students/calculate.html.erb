@@ -8,6 +8,7 @@
     <th></th>
     <th></th>
     </tr>
+<% case @flag when 0 %>
 <% @students.each do |student| %>
   <tr>
     <td><%= student.username %></td>
@@ -32,6 +33,28 @@
   <br />
   <th>Standard deviation: </th>
   <td><%= @resultstd %></td>
+  <% end %>
+  <% case @flag when 1 %>
+<% @students.each do |student| %>
+  <tr>
+    <td><%= student.username %></td>
+    <td><%= student.total_score %></td>
+    <% case student.total_score when @acut..150%>
+    <td>A</td>
+    <% when @bcut..@acut%>
+    <td>B</td>
+    <% when @ccut..@bcut%>
+    <td>C</td>
+    <% when @dcut..@ccut%>
+    <td>D</td>
+    <% when 0..@dcut%> 
+    <td>F</td>
+    <% end %>
+    </tr>
+    <% end %>
+    </table>
+  <br />
+  <% end %>
   <br />
   <%= link_to 'Back', students_path %>
   <br />

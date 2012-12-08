@@ -106,15 +106,20 @@ class StudentsController < ApplicationController
       end
       student.total_score = (@c_earned.to_f/@c_total.to_f)*100
     end
-    @resultavg = 0
-    @resultstd = 0
     @resultavg = @students.inject(0){|acc, student| acc + student.total_score}/@students.length.to_f
     @resultstd = Math.sqrt(@students.inject(0){|sum, u|sum+(u.total_score-@resultavg)**2}/@students.length.to_f)
     render "calculate"
   end
 
   def cutoff
+    @resultavg = 0
+    @resultstd = 0
     @students = Student.all
+    @acut = params[:Acut].to_f
+    @bcut = params[:Bcut].to_f
+    @ccut = params[:Ccut].to_f
+    @dcut = params[:Dcut].to_f
+    @plusmin = params[:plusminus]
     @flag = 1
     @students.each do |student|
       @c_total = 0

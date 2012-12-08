@@ -12,8 +12,6 @@ resources :categories
 
   resources :students
 
-  resources :grades
-
   resources :courses
 
   #get "home/index"
