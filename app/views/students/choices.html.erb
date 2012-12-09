@@ -1,0 +1,13 @@
+<h1>Select Algorithm</h1>
+<br />
+<form action = selectchoice>
+<%= radio_button_tag(:selection, "gauss") %>
+<%= label_tag(:selection_gauss, "Normal Distribution") %>
+<%= radio_button_tag(:selection, "custom") %>
+<%= label_tag(:selection_custom, "Custom Cutoffs") %>
+<br />
+<%= check_box_tag(:plusminus) %>
+<%= label_tag(:plusminus, "Plus/Minus Grading") %>
+<input type="submit"/>
+<br />
+<%= link_to 'Back to Students', students_path %>
