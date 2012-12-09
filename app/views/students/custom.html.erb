@@ -1,14 +1,18 @@
-<h1>Enter Cutoff Ranges</h1>
-<form action = cutoff>
-  <th>A minimum<th>
-  <input type = "decimal" name = "Acut">
-  <th>B minimum<th>
-  <input type = "decimal" name = "Bcut">
-  <th>C minimum<th>
-  <input type = "decimal" name = "Ccut">
-  <th>D minimum<th>
-  <input type = "decimal" name = "Dcut">
-  <br>
-  <%= check_box_tag(:plusminus) %>
-  <%= label_tag(:plusminus, "Plus/Minus Grading") %>
-  <input type="submit"/>
+<h1>Enter Grade Cutoffs</h1>
+  <%= form_tag cutoff_path do %>    
+    <%=hidden_field_tag "plus_minus", @plusminus %>
+    <th>A/A- minimum<th>
+    <input type = "decimal" name = "Acut">
+    <br />
+    <th>B/B- minimum<th>
+    <input type = "decimal" name = "Bcut">
+    <br />
+    <th>C/C- minimum<th>
+    <input type = "decimal" name = "Ccut">
+    <br />
+    <th>D/D- minimum<th>
+    <input type = "decimal" name = "Dcut">
+    <br />
+    <br />
+    <%= submit_tag "Submit" %>
+    <% end %>

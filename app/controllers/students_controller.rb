@@ -92,34 +92,15 @@ class StudentsController < ApplicationController
     end
   end
 
-  def calc_dist
-    @flag = 0
-    @students = Student.all
-    @students.each do |student|
-      @c_total = 0
-      @c_earned = 0
-      Grade.find_all_by_student_id(student.id).each do |grade|
-        Task.find_all_by_id(grade.task_id).each do |course|
-          @c_total += course.total
-          @c_earned += grade.earned
-        end
-      end
-      student.total_score = (@c_earned.to_f/@c_total.to_f)*100
-    end
-    @resultavg = @students.inject(0){|acc, student| acc + student.total_score}/@students.length.to_f
-    @resultstd = Math.sqrt(@students.inject(0){|sum, u|sum+(u.total_score-@resultavg)**2}/@students.length.to_f)
-    render "calculate"
-  end
-
   def cutoff
     @resultavg = 0
     @resultstd = 0
     @students = Student.all
+    @plusminus = params[:plus_minus]
     @acut = params[:Acut].to_f
     @bcut = params[:Bcut].to_f
     @ccut = params[:Ccut].to_f
     @dcut = params[:Dcut].to_f
-    @plusmin = params[:plusminus]
     @flag = 1
     @students.each do |student|
       @c_total = 0
@@ -132,6 +113,51 @@ class StudentsController < ApplicationController
       end
       student.total_score = (@c_earned.to_f/@c_total.to_f)*100
     end
+    @students.each do |student|
+    if @plusminus == "1"
+        case
+          when student.total_score >= (100-@acut)*2/3+@acut
+            student.final_grade = "A+".html_safe
+          when student.total_score >= (100-@acut)*1/3+@acut
+            student.final_grade = "A".html_safe
+          when student.total_score >= @acut
+            student.final_grade = "A-".html_safe
+          when student.total_score >= (@acut-@bcut)*2/3+@bcut
+            student.final_grade = "B+".html_safe
+          when student.total_score >= (@acut-@bcut)*1/3+@bcut
+            student.final_grade = "B".html_safe
+          when student.total_score >= @bcut
+            student.final_grade = "B-".html_safe
+          when student.total_score >= (@bcut-@ccut)*2/3+@ccut
+            student.final_grade = "C+".html_safe
+          when student.total_score >= (@bcut-@ccut)*1/3+@ccut
+            student.final_grade = "C".html_safe
+          when student.total_score >= @ccut
+            student.final_grade = "C-".html_safe
+          when student.total_score >= (@ccut-@dcut)*2/3+@dcut
+            student.final_grade = "D+".html_safe
+          when student.total_score >= (@ccut-@dcut)*1/3+@dcut
+            student.final_grade = "D".html_safe
+          when student.total_score >= @dcut
+            student.final_grade = "D-".html_safe
+          when student.total_score >= 0
+            student.final_grade = "F".html_safe
+        end
+      else
+        case
+          when student.total_score >= @acut
+            student.final_grade = "A".html_safe
+          when student.total_score >= @bcut
+            student.final_grade = "B".html_safe
+          when student.total_score >= @ccut
+            student.final_grade = "C".html_safe
+          when student.total_score >= @dcut
+            student.final_grade = "D".html_safe
+          when student.total_score >= 0
+            student.final_grade = "F".html_safe
+        end
+      end
+    end
     render "calculate"
   end
 
@@ -139,4 +165,77 @@ class StudentsController < ApplicationController
     render "custom"
   end
 
+  def choice_render
+    render "choices"
+  end
+
+  def selectchoice
+    @plusminus = params[:plusminus]
+    @selection = params[:selection]
+    if @selection == "custom"
+      render "custom"
+    else
+      @test = "WAT"
+      @flag = 0
+      @students = Student.all
+      @students.each do |student|
+        @c_total = 0
+        @c_earned = 0
+        Grade.find_all_by_student_id(student.id).each do |grade|
+          Task.find_all_by_id(grade.task_id).each do |course|
+            @c_total += course.total
+            @c_earned += grade.earned
+          end
+        end
+        student.total_score = (@c_earned.to_f/@c_total.to_f)*100
+      end
+      @resultavg = @students.inject(0){|acc, student| acc + student.total_score}/@students.length.to_f
+      @resultstd = Math.sqrt(@students.inject(0){|sum, u|sum+(u.total_score-@resultavg)**2}/@students.length.to_f)
+      @students.each do |student|
+        if @plusminus == "1"
+          case 
+          when student.total_score >= ((100-@resultavg+1.5*@resultstd)*2/3+@resultavg+1.5*@resultstd)
+            student.final_grade = "A+".html_safe
+          when student.total_score >= ((100-@resultavg+1.5*@resultstd)*1/3+@resultavg+1.5*@resultstd)
+            student.final_grade = "A".html_safe
+          when student.total_score >= (@resultavg+1.5*@resultstd)
+            student.final_grade = "A-".html_safe
+          when student.total_score >= ((@resultavg+1.5*@resultstd-@resultavg+0.5*@resultstd)*2/3+@resultavg+0.5*@resultstd)
+            student.final_grade = "B+".html_safe
+          when student.total_score >= ((@resultavg+1.5*@resultstd-@resultavg+0.5*@resultstd)*1/3+@resultavg+0.5*@resultstd)
+            student.final_grade = "B".html_safe
+          when student.total_score >= (@resultavg+0.5*@resultstd)
+            student.final_grade = "B-".html_safe
+          when student.total_score >= ((@resultstd)*2/3+@resultavg-0.5*@resultstd)
+            student.final_grade = "C+".html_safe
+          when student.total_score >= ((@resultstd)*1/3+@resultavg-0.5*@resultstd)
+            student.final_grade = "C".html_safe
+          when student.total_score >= (@resultavg-0.5*@resultstd)
+            student.final_grade = "C-".html_safe
+          when student.total_score >= ((@resultavg-0.5*@resultstd-@resultavg-1.5*@resultstd)*2/3+@resultavg-1.5*@resultstd)
+            student.final_grade = "D+".html_safe
+          when student.total_score >= ((@resultavg-0.5*@resultstd-@resultavg-1.5*@resultstd)*1/3+@resultavg-1.5*@resultstd)
+            student.final_grade = "D".html_safe
+          when student.total_score >= (@resultavg-1.5*@resultstd)
+            student.final_grade = "D-".html_safe
+          when student.total_score >= 0
+            student.final_grade = "F".html_safe
+          end
+        else
+          case student.total_score when (@resultavg-0.5*@resultstd)..(@resultavg+0.5*@resultstd)
+            student.final_grade = "C".html_safe
+          when (@resultavg+0.5*@resultstd)..(@resultavg+1.5*@resultstd)
+            student.final_grade = "B".html_safe
+          when (@resultavg+1.5*@resultstd)..150 
+            student.final_grade = "A".html_safe
+          when (@resultavg-1.5*@resultstd)..(@resultavg-0.5*@resultstd)
+            student.final_grade = "D".html_safe
+          when 0..(@resultavg-1.5*@resultstd)
+            student.final_grade = "F".html_safe
+          end
+        end
+      end
+      render "calculate"
+    end
+  end
 end
