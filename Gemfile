@@ -17,6 +17,8 @@ group :development, :test do
   gem 'sqlite3'
 	gem 'rspec-rails'
 	gem 'cucumber'
+#  gem 'capybara'
+  gem 'guard-rspec'
 end
 
 # Gems used only for assets and not required
